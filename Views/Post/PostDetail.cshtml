@@ -1,0 +1,110 @@
+﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@{
+    ViewData["Title"] = "Chi tiết bài đăng";
+}
+
+@model Post
+
+<div class="container mt-4">
+    <div id="carouselExample" class="carousel slide">
+        <div class="carousel-inner bg-dark">
+            @{
+                var imageUrls = Model.imageUrls!.Split(';');
+                for (int i = 0; i < imageUrls.Length; i++)
+                {
+                    var imageUrl = imageUrls[i];
+                    var isActive = i == 0 ? "active" : "";
+                        <div class="carousel-item @isActive">
+                            <img src="@imageUrl" class="d-block m-auto img-fluid" alt="" style="height:480px; object-fit:cover;">
+                        </div>
+                }
+            }
+         </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <div class="mt-4">
+        <h2 class="text-primary">@Model.title</h2>
+        <hr>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div><strong>Giá:</strong> @Model.price</div>
+            <div><strong>Diện tích:</strong> @Model.area</div>
+            <div><strong>Địa chỉ:</strong> @Model.address</div>
+            <div>
+                @if (ViewBag.isFavourite)
+                {
+                    <i class="fa-solid fa-heart remove-post-in-favourite text-danger" style="cursor:pointer;" data-post-id="@Model.postId"></i>
+                    <i class="fa-regular fa-heart add-to-favourite d-none" style="cursor:pointer" data-post-id="@Model.postId"></i>
+                }
+                else
+                {
+                    <i class="fa-solid fa-heart remove-post-in-favourite text-danger d-none" style="cursor:pointer;" data-post-id="@Model.postId"></i>
+                    <i class="fa-regular fa-heart add-to-favourite" style="cursor:pointer" data-post-id="@Model.postId"></i>
+                }
+            </div>
+        </div>
+        <div class="mb-3">
+            <h5 class="text-secondary">Mô tả:</h5>
+            <p>@Model.description</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.add-to-favourite').click(function () {
+        let postId = $(this).data('post-id');
+        $.ajax({
+            url: '@Url.Action("AddToFavourite", "Favourite")',
+            type: 'POST',
+            data: { postId: postId },
+            success: function (result) {
+                if (result.success) {
+                    $('.add-to-favourite').addClass('d-none');
+                    $('.remove-post-in-favourite').removeClass('d-none');
+                }
+            }
+        });
+    });
+    $('.remove-post-in-favourite').click(function () {
+        let postId = $(this).data('post-id');
+        $.ajax({
+            url: '@Url.Action("RemovePostInFavourite", "Favourite")',
+            type: 'DELETE',
+            data: { postId: postId },
+            success: function (result) {
+                if (result.success) {
+                   $('.add-to-favourite').removeClass('d-none');
+                    $('.remove-post-in-favourite').addClass('d-none');
+                }
+            }
+        });
+    });
+</script>
+
+<style>
+    .carousel-inner img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    h2 {
+        font-size: 1.75rem;
+        margin-bottom: 1rem;
+    }
+    hr {
+        border: 1px solid #ddd;
+    }
+    .text-primary {
+        color: #007bff;
+    }
+    .text-secondary {
+        color: #6c757d;
+    }
+</style>

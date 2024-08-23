@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+@{
+    var userIdClaim = User.FindFirst("UserId")?.Value;
+    var userName = User.Identity!.Name;
+}
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hosttel Bank</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Btl_web_nc.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/font-awesome/css/all.css" />
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            background-color: #343a40;
+            padding: 0.5rem 1rem;
+            position: fixed; /* Fixed position */
+            top: 0;
+            left: 0;
+            width: 100%; /* Full width */
+            z-index: 1000; /* Ensure it stays on top */
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: #ffffff !important;
+        }
+
+        .navbar-nav {
+            margin-left: auto;
+            /* Push items to the right */
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-nav .nav-link {
+            color: #ffffff !important;
+            font-weight: 500;
+            margin-left: 1rem;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #ffc107 !important;
+        }
+
+        .navbar-nav .nav-item.active .nav-link {
+            color: #ffc107 !important;
+        }
+
+        .btn-custom {
+            background-color: #ffc107;
+            color: #343a40;
+            font-weight: bold;
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #e0a800;
+            color: #ffffff;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 2rem 0;
+            text-align: center;
+        }
+
+        footer a {
+            color: #ffc107;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            color: #e0a800;
+        }
+
+        footer .social-icons a {
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+
+        footer .social-icons a:hover {
+            color: #ffc107;
+        }
+
+        .container {
+            margin-top: 2rem;
+        }
+
+        .logout-btn {
+            margin-left: auto;
+            color: #ffc107 !important;
+            font-weight: bold;
+        }
+
+        .logout-btn:hover {
+            color: #ffffff !important;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .user-dropdown .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Hosttel Bank</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        @if (User.IsInRole("Renter") || User.IsInRole("PropertyOwner"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-action="ListFavourites" asp-controller="Post">
+                                    <i class="fa-regular fa-heart" style="cursor:pointer"></i>
+                                    <span>Tin đã lưu</span>
+                                </a>
+                            </li>
+                        }
+                        @if (User.FindFirst("RoleName")?.Value == "PropertyOwner")
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-action="PostNew" asp-controller="Post">Đăng tin</a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Admin">Quản lý
+                                    tài khoản</a>
+                            </li>
+                        }
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            @if (User.FindFirst("RoleName")?.Value != "Renter")
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="PostManage"
+                                        asp-action="Index">Quản lý bài đăng</a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li class="nav-item logout-btn">
+                                <a asp-action="Login" asp-controller="Account" class="nav-link">Đăng nhập</a>
+                            </li>
+                        }
+                        @if (userIdClaim != null)
+                        {
+                            <li class="nav-item">
+                                @await Component.InvokeAsync("Notification", new { userId = int.Parse(userIdClaim!) })
+                            </li>
+                        }
+                    </ul>
+                    @if (User.Identity!.IsAuthenticated)
+                    {
+                        <ul class="navbar-nav">
+                            <li class="nav-item dropdown user-dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span>@userName</span>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="User"
+                                            asp-action="Profile">Thông tin cá nhân</a></li>
+                                    <li><a class="dropdown-item" asp-action="ChangePassword" asp-controller="Account">Đổi
+                                            mật khẩu</a></li>
+                                    <form id="logout-form" asp-action="Logout" asp-controller="Account" method="post"
+                                        style="display: none;">
+                                        <input type="hidden" />
+                                    </form>
+                                    <li>
+                                        <a asp-action="Logout" asp-controller="Account" class="dropdown-item"
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Đăng
+                                            xuất</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="mt-4">
+        <div class="container">
+            <p>&copy; 2024 HosttelBank. All rights reserved.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

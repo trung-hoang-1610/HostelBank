@@ -1,0 +1,284 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model List<Post>
+
+<!-- Search and Filter Section -->
+<div class="search-filter-section mb-4">
+    <div class="search-bar mb-4">
+        <div class="input-group">
+            <input type="text" id="titleInput" class="form-control" placeholder="Tiêu đề" />
+            <input type="number" id="areaInput" class="form-control" placeholder="Diện tích (m²)" />
+            <input type="number" id="priceInput" class="form-control" placeholder="Giá (Triệu)" />
+            <input type="text" id="addressInput" class="form-control" placeholder="Địa chỉ" />
+            <button type="button" class="btn btn-primary" id="searchButton">
+                <i class="fas fa-search"></i> Tìm kiếm
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="filter-buttons mb-4 text-center">
+        <a asp-route-typeName="All" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary mx-1">Tất
+            cả</a>
+        <a asp-route-typeName="SELL" asp-controller="Home" asp-action="Index"
+            class="btn btn-outline-primary mx-1">Bán</a>
+        <a asp-route-typeName="RENT" asp-controller="Home" asp-action="Index" class="btn btn-outline-primary mx-1">Cho
+            thuê</a>
+    </div>
+</div>
+
+<!-- Post List -->
+<div class="post-list">
+    @foreach (var post in Model)
+    {
+        <div class="post-card">
+            <div class="carousel-container">
+                <div id="carousel-@post.postId" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @if (post.imageUrls != null && post.imageUrls.Any())
+                        {
+                            var imageUrls = post.imageUrls.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                            for (int i = 0; i < imageUrls.Length; i++)
+                            {
+                                var isActive = i == 0 ? "active" : "";
+                                <div class="carousel-item @isActive">
+                                    <img src="@imageUrls[i].Trim()" class="d-block w-100" alt="...">
+                                </div>
+                            }
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@post.postId"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-@post.postId"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+                <p class="text-center mt-2 text-muted">
+                    <i class="fas fa-image"></i> @post.imageUrls!.Split(";").Length ảnh
+                </p>
+            </div>
+            <div class="post-details">
+                <h5 class="post-title">
+                    <a asp-action="PostDetail" asp-controller="Post" asp-route-postId="@post.postId"
+                        class="text-decoration-none text-primary">@post.title</a>
+                </h5>
+                <div class="post-info">
+                    <div class="info-item">
+                        <span class="text-muted">Loại:</span>
+                        <span>@post.Type?.typeName</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="text-muted">Giá:</span>
+                        <p class="price">@post.price Triệu/Tháng.</p>
+                    </div>
+                    <div class="info-item">
+                        <span class="text-muted">Diện tích:</span>
+                        <p>@post.area m²</p>
+                    </div>
+                    <div class="info-item">
+                        <span class="text-muted">Địa chỉ:</span>
+                        <p>@post.address</p>
+                    </div>
+                    <div>
+                        <span class="text-muted">Mô tả:</span>
+                        <p class="text-truncate">@post.description</p>
+                    </div>
+                </div>
+                <div class="post-meta">
+                    <div>
+                        <span class="text-muted">Người đăng:</span>
+                        <span>@post.User?.username</span>
+                    </div>
+                    <div>
+                        <span class="text-muted">Ngày đăng:</span>
+                        <span>@post.createdDate</span>
+                    </div>
+                    <div>
+                        <span class="text-muted">SĐT:</span>
+                        <span>@post.User?.phoneNumber</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Scripts -->
+<script>
+    document.getElementById("searchButton").addEventListener("click", function () {
+        const title = document.getElementById("titleInput").value;
+        const area = document.getElementById("areaInput").value;
+        const price = document.getElementById("priceInput").value;
+        const address = document.getElementById("addressInput").value;
+
+        const baseUrl = "@Url.Action("Index", "Home")";
+        const newUrl = baseUrl +
+            "?title=" + encodeURIComponent(title) +
+            "&area=" + encodeURIComponent(area) +
+            "&price=" + encodeURIComponent(price) +
+            "&address=" + encodeURIComponent(address);
+
+        window.location.href = newUrl;
+    });
+</script>
+
+<!-- Styles -->
+<style>
+    /* Đảm bảo khoảng cách cho phần nội dung chính */
+    body {
+        padding-top: 200px;
+        /* Điều chỉnh tùy theo chiều cao của thanh tìm kiếm và bộ lọc */
+    }
+
+    .search-filter-section {
+        position: fixed;
+        top: 60px;
+        /* Hoặc chiều cao của navbar nếu có */
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        /* Màu nền để đảm bảo độ rõ ràng */
+        padding: 0.5rem;
+        z-index: 1000;
+        /* Đảm bảo nó nằm trên các phần khác */
+    }
+
+    .search-bar {
+        margin-bottom: 1rem;
+        /* Khoảng cách giữa thanh tìm kiếm và các nút bộ lọc */
+    }
+    .input-group{
+        display: flex;
+    }
+
+    .filter-buttons {
+        margin: 0 auto;
+        max-width: 1000px;
+    }
+
+    .filter-buttons a {
+        width: 100px;
+    }
+
+    .post-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-top: 1rem;
+        /* Khoảng cách bên dưới phần tìm kiếm và bộ lọc */
+    }
+
+    .post-card {
+        display: flex;
+        flex-direction: row;
+        box-sizing: border-box;
+        width: 100%;
+        margin-bottom: 1rem;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+
+    .carousel-container {
+        flex: 1 1 40%;
+        position: relative;
+        height: 250px;
+        /* Chiều cao của carousel */
+        overflow: hidden;
+    }
+
+    .carousel-inner img {
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .post-details {
+        flex: 1 1 60%;
+        padding: 15px;
+    }
+
+    .post-title a {
+        color: #055699;
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+
+    .post-title a:hover {
+        text-decoration: underline;
+    }
+
+    .post-info {
+        margin-top: 10px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .info-item span {
+        margin-right: 10px;
+    }
+
+    .info-item p {
+        margin: 0;
+    }
+
+    .price {
+        color: #16c784;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+
+    .text-truncate {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+        max-height: 4.5em;
+        line-height: 1.5em;
+    }
+
+    .post-meta {
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .post-meta div {
+        flex: 1 1 auto;
+        margin-bottom: 5px;
+    }
+
+    .media (max-width: 767px) {
+        .post-card {
+            flex-direction: column;
+        }
+
+        .carousel-container {
+            flex: 1 1 100%;
+        }
+
+        .post-details {
+            flex: 1 1 100%;
+        }
+    }
+</style>
+
+<!-- Slick Carousel CSS and JS -->
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

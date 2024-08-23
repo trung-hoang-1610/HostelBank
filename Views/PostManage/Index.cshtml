@@ -1,0 +1,246 @@
+@model List<Post>
+@{
+    var totalPosts = Model.Count;
+    var isAdmin = User.IsInRole("Admin");
+
+    var approvedPosts = Model.Where(p => p.status == "Approved").ToList();
+    var pendingPosts = Model.Where(p => p.status == "Pending").ToList();
+    var rejectedPosts = Model.Where(p => p.status == "Rejected").ToList();
+
+
+}
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+<!-- Slick Carousel JS -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<div style="height: 50px;">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div id="alert-success" class="alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    else if (TempData["ErrorMessage"] != null)
+    {
+        <div id="alert-error" class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+</div>
+
+<h1>Danh sách bài đăng</h1>
+<p><strong>Tổng số bài đăng:</strong> @totalPosts</p>
+
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" id="postStatusTabs" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="approved-tab" data-toggle="tab" href="#approved" role="tab"
+            aria-controls="approved" aria-selected="true">Đã duyệt (@approvedPosts.Count)</a>
+    </li>
+    <li class="nav-item">
+
+        @if (isAdmin && pendingPosts.Count > 0)
+        {
+            <a class="nav-link" id="pending-tab" data-toggle="tab" href="#pending" role="tab" aria-controls="pending"
+                aria-selected="false">Đang chờ xử lý <sup><span class="badge badge-danger">@pendingPosts.Count</span></sup></a>
+        }
+        else
+        {
+            <a class="nav-link" id="pending-tab" data-toggle="tab" href="#pending" role="tab" aria-controls="pending"
+                aria-selected="false">Đang chờ xử lý (@pendingPosts.Count)</a>
+        }
+
+
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="rejected-tab" data-toggle="tab" href="#rejected" role="tab" aria-controls="rejected"
+            aria-selected="false">Từ chối (@rejectedPosts.Count)</a>
+    </li>
+</ul>
+
+
+<!-- Tab content -->
+<div class="tab-content" id="postStatusTabContent">
+    <!-- Approved Tab -->
+    <div class="tab-pane fade show active" id="approved" role="tabpanel" aria-labelledby="approved-tab">
+        <div class="row">
+            @foreach (var post in approvedPosts)
+            {
+                @Html.Partial("_PostCard", post)
+            }
+        </div>
+    </div>
+
+    <!-- Pending Tab -->
+    <div class="tab-pane fade" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+        <div class="row">
+            @foreach (var post in pendingPosts)
+            {
+                @Html.Partial("_PostCard", post)
+            }
+        </div>
+    </div>
+
+    <!-- Rejected Tab -->
+    <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
+        <div class="row">
+            @foreach (var post in rejectedPosts)
+            {
+                @Html.Partial("_PostCard", post)
+            }
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.carousel').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            dots: true,
+            arrows: true,
+            infinite: true,
+            adaptiveHeight: true
+        });
+    });
+
+    function confirmDelete() {
+        return confirm("Bạn có chắc chắn muốn xóa bài đăng này?");
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.carousel').slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            dots: true,
+            arrows: true,
+            infinite: true,
+            adaptiveHeight: true
+        });
+    });
+
+    function confirmDelete() {
+        return confirm("Bạn có chắc chắn muốn xóa bài đăng này?");
+    }
+</script>
+
+<style>
+    .card-custom {
+        background-color: #f3f4f6;
+        /* Màu nền xám nhạt */
+        border: 1px solid #e0e0e0;
+        /* Đường viền xám nhạt */
+    }
+
+    .list-group-item {
+        background-color: #f3f4f6;
+    }
+
+    .card-body {
+        padding: 20px;
+        /* Thay đổi padding nếu cần */
+    }
+
+    .carousel-container {
+        padding: 20px;
+        width: 300px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .carousel-item {
+        width: 100%;
+        height: auto;
+    }
+
+    .carousel-item img {
+        max-width: inherit;
+        max-height: inherit;
+        height: inherit;
+        width: inherit;
+        object-fit: cover;
+    }
+
+    .square-meter {
+        display: inline;
+        margin-left: 30px;
+        color: black;
+    }
+
+    .alert {
+        opacity: 1;
+        transition: opacity 1s ease-out;
+    }
+
+    .alert.hide {
+        opacity: 0;
+    }
+
+
+    .status-approved {
+        color: rgb(18, 168, 18);
+        font-weight: bold;
+
+    }
+
+    .status-pending {
+        color: rgb(161, 161, 18);
+        font-weight: bold;
+
+    }
+
+    .status-rejected {
+        color: rgb(165, 13, 13);
+        font-weight: bold;
+
+        
+
+    }
+    .badge-danger {
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 50%;
+            /* Tạo hình tròn */
+        }
+</style>
+
+<script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+        // Lấy thông báo từ HTML
+        var successAlert = document.getElementById('alert-success');
+        var errorAlert = document.getElementById('alert-error');
+
+        // Thời gian hiển thị thông báo (milisecond)
+        var displayDuration = 2000; // 5 giây
+
+        // Hàm để ẩn thông báo
+        function hideAlert(alertElement) {
+            if (alertElement) {
+                setTimeout(function () {
+                    alertElement.classList.add('hide');
+                    // Sau khi hiệu ứng mờ xong, ẩn hoàn toàn thông báo
+                    setTimeout(function () {
+                        alertElement.style.display = 'none';
+                    }, 1000); // Thời gian trễ để hoàn thành hiệu ứng mờ
+                }, displayDuration);
+            }
+        }
+
+        // Ẩn thông báo thành công và lỗi (nếu có)
+        hideAlert(successAlert);
+        hideAlert(errorAlert);
+    });
+</script>
