@@ -4796,11 +4796,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Trung\\WEBNC\\MVCProject\\HosttelBank\\Btl_web_nc\\Btl_web_nc.csproj",
+      "projectUniqueName": "C:\\Trung\\WEBNC\\MVC\\Btl_web_nc\\Btl_web_nc.csproj",
       "projectName": "Btl_web_nc",
-      "projectPath": "C:\\Trung\\WEBNC\\MVCProject\\HosttelBank\\Btl_web_nc\\Btl_web_nc.csproj",
+      "projectPath": "C:\\Trung\\WEBNC\\MVC\\Btl_web_nc\\Btl_web_nc.csproj",
       "packagesPath": "C:\\Users\\Trung\\.nuget\\packages\\",
-      "outputPath": "C:\\Trung\\WEBNC\\MVCProject\\HosttelBank\\Btl_web_nc\\obj\\",
+      "outputPath": "C:\\Trung\\WEBNC\\MVC\\Btl_web_nc\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Trung\\AppData\\Roaming\\NuGet\\NuGet.Config",

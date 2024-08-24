@@ -3,61 +3,133 @@
     ViewData["Title"] = "Chi tiết bài đăng";
 }
 
-@model Post
+@model PostDetailsViewModel
 
-<div class="container mt-4">
-    <div id="carouselExample" class="carousel slide">
-        <div class="carousel-inner bg-dark">
-            @{
-                var imageUrls = Model.imageUrls!.Split(';');
-                for (int i = 0; i < imageUrls.Length; i++)
-                {
-                    var imageUrl = imageUrls[i];
-                    var isActive = i == 0 ? "active" : "";
-                        <div class="carousel-item @isActive">
-                            <img src="@imageUrl" class="d-block m-auto img-fluid" alt="" style="height:480px; object-fit:cover;">
+
+<div class="container mt-5">
+
+    <section class="the__post-block mt-4" style="margin-top: 50px;">
+        <h2 class="text-primary text-left mb-4"><b>@Model.Post.title</b></h2>
+        <div class="image-slider-container position-relative">
+            <button id="prevBtn" class="btn btn-outline-primary position-absolute top-50 start-0 translate-middle-y">
+                <i class="fa fa-chevron-left"></i>
+            </button>
+
+            <div class="image-slider d-flex justify-content-between">
+                @{
+                    var imageUrls = Model.Post.imageUrls!.Split(';');
+                    foreach (var imageUrl in imageUrls)
+                    {
+                        <div class="image-container">
+                            <img src="@imageUrl" class="img-fluid" alt="Image">
                         </div>
-                }
-            }
-         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
-
-    <div class="mt-4">
-        <h2 class="text-primary">@Model.title</h2>
-        <hr>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div><strong>Giá:</strong> @Model.price</div>
-            <div><strong>Diện tích:</strong> @Model.area</div>
-            <div><strong>Địa chỉ:</strong> @Model.address</div>
-            <div>
-                @if (ViewBag.isFavourite)
-                {
-                    <i class="fa-solid fa-heart remove-post-in-favourite text-danger" style="cursor:pointer;" data-post-id="@Model.postId"></i>
-                    <i class="fa-regular fa-heart add-to-favourite d-none" style="cursor:pointer" data-post-id="@Model.postId"></i>
-                }
-                else
-                {
-                    <i class="fa-solid fa-heart remove-post-in-favourite text-danger d-none" style="cursor:pointer;" data-post-id="@Model.postId"></i>
-                    <i class="fa-regular fa-heart add-to-favourite" style="cursor:pointer" data-post-id="@Model.postId"></i>
+                    }
                 }
             </div>
+
+            <button id="nextBtn" class="btn btn-outline-primary position-absolute top-50 end-0 translate-middle-y">
+                <i class="fa fa-chevron-right"></i>
+            </button>
         </div>
-        <div class="mb-3">
-            <h5 class="text-secondary">Mô tả:</h5>
-            <p>@Model.description</p>
+
+    </section>
+    <section class="the__post-block mt-4">
+        <h2 class="title">Thông tin mô tả</h2>
+        <div class="post-detail-content position-relative">
+            @if (ViewBag.isFavourite)
+            {
+                <i class="fa-solid fa-heart remove-post-in-favourite text-danger" style="cursor:pointer;"
+                    data-post-id="@Model.Post.postId"></i>
+                <i class="fa-regular fa-heart add-to-favourite d-none" style="cursor:pointer"
+                    data-post-id="@Model.Post.postId"></i>
+            }
+            else
+            {
+                <i class="fa-solid fa-heart remove-post-in-favourite text-danger d-none" style="cursor:pointer;"
+                    data-post-id="@Model.Post.postId"></i>
+                <i class="fa-regular fa-heart add-to-favourite" style="cursor:pointer"
+                    data-post-id="@Model.Post.postId"></i>
+            }
+            <p>@Model.Post.description</p>
         </div>
-    </div>
+    </section>
+
+    <section class="the__post-block section-page-stats mt-4">
+        <h3 class="title">Đặc điểm tin đăng</h3>
+        <div class="body">
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="td-name">Giá:</td>
+                        <td class="td-value">@Model.Post.price <span>Triệu/Tháng</span></td>
+                    </tr>
+                    <tr>
+                        <td class="td-name">Diện tích:</td>
+                        <td class="td-value">@Model.Post.area <span>m<sup>2</sup></span></td>
+                    </tr>
+                    <tr>
+                        <td class="td-name">Địa chỉ:</td>
+                        <td class="td-value">@Model.Post.address</td>
+                    </tr>
+                    <tr>
+                        <td class="td-name">Ngày đăng tin:</td>
+                        <td class="td-value"><time>@Model.Post.createdDate.ToString("dddd, HH:mm dd/MM/yyyy")</time>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="the__post-block section-page-stats mt-4">
+        <h3 class="title">Thông tin liên hệ</h3>
+        <div class="body">
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="td-name">Người đăng:</td>
+                        <td class="td-value">@Model.User.username</td>
+                    </tr>
+                    <tr>
+                        <td class="td-name">Số điện thoại:</td>
+                        <td class="td-value">@Model.User.phoneNumber</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 </div>
 
 <script>
+    $(document).ready(function () {
+        var currentIndex = 0;
+        var imageCount = $('.image-slider .image-container').length;
+
+        function showImages(index) {
+            $('.image-slider').css('transform', 'translateX(' + (-index * 100) + '%)');
+        }
+
+        $('#nextBtn').click(function () {
+            if (currentIndex < imageCount - 2) { // Show 2 images at a time
+                currentIndex++;
+                showImages(currentIndex);
+            }
+        });
+
+        $('#prevBtn').click(function () {
+            if (currentIndex > 0) {
+                currentIndex--;
+                showImages(currentIndex);
+            }
+        });
+    });
+</script>
+
+<script>
+    $('#viewAllImagesBtn').click(function () {
+        alert('Display all images in a detailed view');
+    });
+
     $('.add-to-favourite').click(function () {
         let postId = $(this).data('post-id');
         $.ajax({
@@ -72,6 +144,7 @@
             }
         });
     });
+
     $('.remove-post-in-favourite').click(function () {
         let postId = $(this).data('post-id');
         $.ajax({
@@ -80,7 +153,7 @@
             data: { postId: postId },
             success: function (result) {
                 if (result.success) {
-                   $('.add-to-favourite').removeClass('d-none');
+                    $('.add-to-favourite').removeClass('d-none');
                     $('.remove-post-in-favourite').addClass('d-none');
                 }
             }
@@ -89,22 +162,117 @@
 </script>
 
 <style>
-    .carousel-inner img {
+    .image-slider-container {
+        overflow: hidden;
+        position: relative;
         width: 100%;
-        height: 100%;
+    }
+
+    .image-slider {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    .image-container {
+        min-width: 50%;
+        padding: 0 5px;
+    }
+
+    .image-container img {
+        width: 100%;
+        height: 240px;
         object-fit: cover;
     }
-    h2 {
-        font-size: 1.75rem;
-        margin-bottom: 1rem;
-    }
-    hr {
+
+    .the__post-block {
+        padding: 20px;
         border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        margin-bottom: 20px;
     }
-    .text-primary {
+
+    .title {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .post-detail-content {
+        position: relative;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        margin-bottom: 20px;
+        /* Khoảng cách dưới cùng nếu cần */
+    }
+
+    .post-detail-content i {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 1.5rem;
         color: #007bff;
+        /* Thay đổi màu sắc nếu cần */
     }
+
+    .post-detail-content p {
+        margin-top: 30px;
+    }
+
+    .section-page-stats {
+        margin-top: 30px;
+    }
+
+    .section-page-stats .body {
+        padding-top: 15px;
+    }
+
+    .section-page-stats table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .section-page-stats .td-name {
+        width: 30%;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .section-page-stats .td-value {
+        width: 70%;
+        padding: 5px 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        font-weight: bold;
+    }
+
+    h5 {
+        font-size: 1.25rem;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .text-primary {
+        color: #6c757d;
+    }
+
     .text-secondary {
         color: #6c757d;
+    }
+
+    .btn-outline-primary {
+        z-index: 10;
+        background-color: rgba(255, 255, 255, 0.7);
     }
 </style>

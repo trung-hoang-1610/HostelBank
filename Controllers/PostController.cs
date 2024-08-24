@@ -7,7 +7,7 @@ using System.Net;
 
 namespace Btl_web_nc.Controllers
 {
-    
+
     [Authorize]
     public class PostController : Controller
     {
@@ -36,9 +36,11 @@ namespace Btl_web_nc.Controllers
 
         [HttpPost]
         [AdminOrPropertyOwnerFilter]
-        public IActionResult PostNew(PostViewModel model) {
-            if (ModelState.IsValid) {
-               int userId = Int32.Parse(User.FindFirst("UserId")!.Value);
+        public IActionResult PostNew(PostViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                int userId = Int32.Parse(User.FindFirst("UserId")!.Value);
                 string typeName = model.Type!;
                 long typeId = typeRepositories.GetTypeByName(typeName);
                 Post post = new Post
@@ -47,25 +49,32 @@ namespace Btl_web_nc.Controllers
                     typeId = typeId,
                     title = model.Title,
                     address = model.Address,
-                    price = model.Price ??0,
+                    price = model.Price ?? 0,
                     status = "Pending",
                     description = model.Description,
-                    area = model.Area ??0,
+                    area = model.Area ?? 0,
                     createdDate = DateTime.Now,
                     updatedDate = DateTime.Now,
                     imageUrls = model.ImageUrls
                 };
                 postRepositories.AddNewPost(post);
             }
-             return View(model);
+            return View(model);
         }
-        
+
         [HttpGet]
         public IActionResult PostDetail(long postId)
         {
             Post post = postRepositories.GetPostById(postId);
             int userId = Int32.Parse(User.FindFirst("UserId")!.Value);
-            Favourite favourite = favouriteRepositories.GetFavouriteId(postId, userId);
+            var favourite = favouriteRepositories.GetFavouriteId(postId, userId);
+            var user = userRepositories.GetUserById(userId);
+
+            var model = new PostDetailsViewModel
+            {
+                Post = post,
+                User = user
+            };
             if (favourite != null)
             {
                 ViewBag.isFavourite = true;
@@ -74,13 +83,13 @@ namespace Btl_web_nc.Controllers
             {
                 ViewBag.isFavourite = false;
             }
-            return View(post);
+            return View(model);
         }
 
         [HttpGet]
         public IActionResult ListFavourites()
         {
-           int userId = Int32.Parse(User.FindFirst("UserId")!.Value);
+            int userId = Int32.Parse(User.FindFirst("UserId")!.Value);
             List<Post> favouritePosts = postRepositories.GetFavouritePostsByUserId(userId).Select(p => new Post
             {
                 postId = p.postId,
@@ -98,7 +107,7 @@ namespace Btl_web_nc.Controllers
                 User = userRepositories.GetUserById(p.userId),
                 Type = typeRepositories.GetTypeById(p.typeId)
             }).ToList().Where(p => p.status == "Approved").ToList();
-            return View("favouritePosts",favouritePosts);
+            return View("favouritePosts", favouritePosts);
         }
     }
 }

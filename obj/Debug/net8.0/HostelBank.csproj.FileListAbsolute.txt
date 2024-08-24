@@ -1,0 +1,9 @@
+C:\Trung\WEBNC\MVC\Btl_web_nc\obj\Debug\net8.0\HostelBank.csproj.AssemblyReference.cache
+C:\Trung\WEBNC\MVC\Btl_web_nc\obj\Debug\net8.0\HostelBank.GeneratedMSBuildEditorConfig.editorconfig
+C:\Trung\WEBNC\MVC\Btl_web_nc\obj\Debug\net8.0\HostelBank.AssemblyInfoInputs.cache
+C:\Trung\WEBNC\MVC\Btl_web_nc\obj\Debug\net8.0\HostelBank.AssemblyInfo.cs
+C:\Trung\WEBNC\MVC\Btl_web_nc\obj\Debug\net8.0\HostelBank.csproj.CoreCompileInputs.cache
+C:\Trung\WEBNC\MVC\Btl_web_nc\obj\Debug\net8.0\HostelBank.MvcApplicationPartsAssemblyInfo.cache
+C:\Trung\WEBNC\MVC\Btl_web_nc\obj\Debug\net8.0\HostelBank.RazorAssemblyInfo.cache
+C:\Trung\WEBNC\MVC\Btl_web_nc\obj\Debug\net8.0\HostelBank.RazorAssemblyInfo.cs
+C:\Trung\WEBNC\MVC\Btl_web_nc\obj\Debug\net8.0\HostelBank.sourcelink.json
